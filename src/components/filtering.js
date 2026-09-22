@@ -27,7 +27,28 @@ export function initFiltering(elements, indexes) {
       }
     }
 
+    // Преобразуем totalFrom и totalTo в массив [from, to] для правила arrayAsRange
+    // и приводим к числам, если они заданы
+    const totalFrom =
+      state.totalFrom !== "" && state.totalFrom != null
+        ? parseFloat(state.totalFrom)
+        : undefined;
+    const totalTo =
+      state.totalTo !== "" && state.totalTo != null
+        ? parseFloat(state.totalTo)
+        : undefined;
+
+    // Формируем объект состояния для компаратора
+    const filterState = {
+      ...state,
+      // Заменяем отдельные поля на массив для total
+      total: [totalFrom, totalTo],
+    };
+    // Удаляем оригинальные поля, чтобы компаратор не сравнивал их как строки
+    delete filterState.totalFrom;
+    delete filterState.totalTo;
+
     // @todo: #4.5 — отфильтровать данные используя компаратор
-    return data.filter((row) => compare(row, state));
+    return data.filter((row) => compare(row, filterState));
   };
 }
